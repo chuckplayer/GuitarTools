@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "GuitarTools (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "GuitarTools (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
