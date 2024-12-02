@@ -1,16 +1,20 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Numerics;
-using NAudio.Wave;
-using MathNet.Numerics;
+﻿using MathNet.Numerics;
 using MathNet.Numerics.IntegralTransforms;
+using NAudio.Wave;
+using System;
 using System.ComponentModel;
+using System.Linq;
+using System.Numerics;
 using DispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue;
 
 
 namespace GuitarTools;
 
+/// <summary>
+/// Inspiration and starting code for this was taken from the Python HPS algorithm for guitar tuning by chciken.com
+/// Check out the original article here: https://chionophilous.wordpress.com/2012/04/09/harmonic-product-spectrum-guitar-tuner/
+/// The original code can be found here: https://github.com/not-chciken/guitar_tuner 
+/// </summary>
 public class Tuner : INotifyPropertyChanged
 {
     private const int SampleFreq = 48000; // Sample frequency in Hz
@@ -20,15 +24,13 @@ public class Tuner : INotifyPropertyChanged
     private const double PowerThresh = 1e-6; // Tuning is activated if the signal power exceeds this threshold
     private const double ConcertPitch = 440; // Defining A4
     private const double WhiteNoiseThresh = 0.2; // Threshold for noise suppression
-    //private readonly double _windowTLen = WindowSize / (double)SampleFreq; // Length of the window in seconds
-    //private readonly double _sampleTLength = 1.0 / SampleFreq; // Length between two samples in seconds
-    private readonly double _deltaFreq = SampleFreq / (double)WindowSize; // Frequency step width
+    private const double DeltaFreq = SampleFreq / (double)WindowSize; // Frequency step width
     private readonly int[] _octaveBands = [50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600];
     private readonly string[] _allNotes = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
     private float[] _windowSamples = new float[WindowSize];
     private string[] _noteBuffer = new string[2];
     private readonly double[] _hannWindow = Window.Hann(WindowSize);
-    private WaveInEvent waveIn;
+    private WaveInEvent _waveIn;
     private readonly DispatcherQueue _dispatcherQueue;
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -72,11 +74,11 @@ public class Tuner : INotifyPropertyChanged
             return;
 
         IsTuning = true;
-        waveIn = new WaveInEvent();
-        waveIn.WaveFormat = new WaveFormat(SampleFreq, 16, 1);
-        waveIn.BufferMilliseconds = (int)(WindowStep / (double)SampleFreq * 1000.0);
-        waveIn.DataAvailable += WaveIn_DataAvailable;
-        waveIn.StartRecording();
+        _waveIn = new WaveInEvent();
+        _waveIn.WaveFormat = new WaveFormat(SampleFreq, 16, 1);
+        _waveIn.BufferMilliseconds = (int)(WindowStep / (double)SampleFreq * 1000.0);
+        _waveIn.DataAvailable += WaveIn_DataAvailable;
+        _waveIn.StartRecording();
     }
     /// <summary>
     /// Stops the tuner.
@@ -88,15 +90,10 @@ public class Tuner : INotifyPropertyChanged
 
         IsTuning = false;
 
-        if (waveIn != null)
-        {
-            waveIn.DataAvailable -= WaveIn_DataAvailable;
-            waveIn.StopRecording();
-            waveIn.Dispose();
-            waveIn = null;
-        }
-
-        SetCurrentNoteSafe(null);
+        _waveIn!.DataAvailable -= WaveIn_DataAvailable;
+        _waveIn.StopRecording();
+        _waveIn.Dispose();
+        CurrentNote = null;
     }
     
     /// <summary>
@@ -107,7 +104,7 @@ public class Tuner : INotifyPropertyChanged
     private Tuple<string, double> FindClosestNote(double pitch)
     {
         var i = (int)Math.Round(12 * Math.Log2(pitch / ConcertPitch));
-        var closestNote = _allNotes[(i + 1200) % 12] + (4 + ((i + 9) / 12));
+        var closestNote = _allNotes[(i + 1200) %12] + (4 + (i + 9) / 12);
         var closestPitch = ConcertPitch * Math.Pow(2, i / 12.0);
         return Tuple.Create(closestNote, closestPitch);
     }
@@ -135,9 +132,8 @@ public class Tuner : INotifyPropertyChanged
             Array.Copy(newSamples, 0, _windowSamples, _windowSamples.Length - samplesToRemove, samplesToRemove);
         }
 
-        // Calculate signal power
+        // Skip if signal power is too low
         double signalPower = _windowSamples.Select(s => s * s).Sum() / _windowSamples.Length;
-        
         if (signalPower < PowerThresh)
         {
             return;
@@ -149,7 +145,6 @@ public class Tuner : INotifyPropertyChanged
         {
             hannSamples[i] = _windowSamples[i] * _hannWindow[i];
         }
-
         // Perform FFT
         var fftBuffer = hannSamples.Select(v => new Complex(v, 0)).ToArray();
         Fourier.Forward(fftBuffer, FourierOptions.Matlab);
@@ -161,18 +156,18 @@ public class Tuner : INotifyPropertyChanged
             magnitudeSpec[i] = fftBuffer[i].Magnitude;
         }
 
-        // Suppress mains hum, set everything below 62Hz to zero
-        var limit = (int)(62 / _deltaFreq);
+        // Suppress mains hum
+        const int limit = (int)(62 / DeltaFreq);
         for (var i = 0; i < limit && i < magnitudeSpec.Length; i++)
         {
             magnitudeSpec[i] = 0;
         }
 
         // Noise suppression based on octave bands
-        for (var j = 0; j < _octaveBands.Length - 1; j++)
+         for (var j = 0; j < _octaveBands.Length - 1; j++)
         {
-            var indStart = (int)(_octaveBands[j] / _deltaFreq);
-            var indEnd = (int)(_octaveBands[j + 1] / _deltaFreq);
+            var indStart = (int)(_octaveBands[j] / DeltaFreq);
+            var indEnd = (int)(_octaveBands[j + 1] / DeltaFreq);
             indEnd = indEnd < magnitudeSpec.Length ? indEnd : magnitudeSpec.Length;
             double avgEnergyPerFreq = 0;
             for (var i = indStart; i < indEnd; i++)
@@ -186,22 +181,12 @@ public class Tuner : INotifyPropertyChanged
             }
         }
 
-        // Interpolate spectrum
+        // Interpolate spectrum using MathNet.Numerics interpolation
         var ipolLength = magnitudeSpec.Length * NumHps;
-        var magSpecIpol = new double[ipolLength];
-        for (var i = 0; i < ipolLength; i++)
-        {
-            var x = i / (double)NumHps;
-            var x0 = (int)Math.Floor(x);
-            var x1 = x0 + 1;
-            if (x1 >= magnitudeSpec.Length)
-            {
-                x1 = magnitudeSpec.Length - 1;
-            }
-            var y0 = magnitudeSpec[x0];
-            var y1 = magnitudeSpec[x1];
-            magSpecIpol[i] = y0 + (y1 - y0) * (x - x0);
-        }
+        var xValues = Enumerable.Range(0, magnitudeSpec.Length).Select(x => (double)x).ToArray();
+        var xInterp = Enumerable.Range(0, ipolLength).Select(i => i / (double)NumHps).ToArray();
+        var spline = Interpolate.Linear(xValues, magnitudeSpec);
+        var magSpecIpol = xInterp.Select(x => spline.Interpolate(x)).ToArray();
 
         // Normalize interpolated spectrum
         var normFactor = Math.Sqrt(magSpecIpol.Select(v => v * v).Sum());
@@ -212,14 +197,27 @@ public class Tuner : INotifyPropertyChanged
 
         // Compute Harmonic Product Spectrum (HPS)
         var hpsSpec = magSpecIpol.ToArray();
-        for (var i = 1; i < NumHps; i++)
+
+        for (var i = 0; i < NumHps; i++)
         {
-            var decimateFactor = i + 1;
-            var length = hpsSpec.Length / decimateFactor;
-            for (var j = 0; j < length; j++)
+            var downsampleFactor = i + 1;
+            var hpsLength = (int)Math.Ceiling(magSpecIpol.Length / (double)downsampleFactor);
+
+            var tmpHpsSpec = new double[hpsLength];
+
+            // Multiply hpsSpec[:hpsLength] * magSpecIpol[::downsampleFactor]
+            for (var j = 0; j < hpsLength; j++)
             {
-                hpsSpec[j] *= magSpecIpol[j * decimateFactor];
+                tmpHpsSpec[j] = hpsSpec[j] * magSpecIpol[j * downsampleFactor];
             }
+
+            // Check if tmpHpsSpec has any non-zero elements
+            if (tmpHpsSpec.All(value => value == 0))
+            {
+                break;
+            }
+
+            hpsSpec = tmpHpsSpec;
         }
 
         // Find the maximum in HPS spectrum
@@ -231,18 +229,17 @@ public class Tuner : INotifyPropertyChanged
         closestPitch = Math.Round(closestPitch, 1);
 
         // Update note buffer
-        _noteBuffer = new[] { closestNote, _noteBuffer[0] };
+        _noteBuffer = [closestNote, _noteBuffer[0]];
 
-        if (_noteBuffer.All(n => n == _noteBuffer[0]))
+        if (_noteBuffer.Any(n => n != _noteBuffer[0])) return;
+
+        SetCurrentNoteSafe(new ClosestNote
         {
-            SetCurrentNoteSafe(new ClosestNote
-            {
-                Note = closestNote,
-                MaxFrequency = maxFreq,
-                ClosestPitch = closestPitch
-            });
-            Console.WriteLine($"Note: {closestNote}, Max Frequency: {maxFreq} Hz, Closest Pitch: {closestPitch} Hz");
-        }
+            Note = closestNote,
+            MaxFrequency = maxFreq,
+            ClosestPitch = closestPitch
+        });
+        Console.WriteLine($"Note: {closestNote}, Max Frequency: {maxFreq} Hz, Closest Pitch: {closestPitch} Hz");
     }
     private void SetCurrentNoteSafe(ClosestNote? note)
     {
@@ -271,6 +268,7 @@ public class ClosestNote
     /// The closest pitch in Hz.
     /// </summary>
     public double ClosestPitch { get; set; }
-    public string MaxFrequencyText => MaxFrequency > 0 ? $"Frequency: {MaxFrequency} Hz" : "Frequency: N/A";
-    public string ClosestPitchText => ClosestPitch > 0 ? $"Closest Pitch: {ClosestPitch} Hz" : "Closest Pitch: N/A";
+    public string MaxFrequencyText => MaxFrequency > 0 ? $"{MaxFrequency}" : "";
+    public string ClosestPitchText => ClosestPitch > 0 ? $"{ClosestPitch}" : "";
+    public string FrequencyPitchText => MaxFrequency + ClosestPitch > 0 ? $"{MaxFrequency}/{ClosestPitch} Hz" : "";
 }

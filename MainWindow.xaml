@@ -12,8 +12,7 @@
     <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /><!-- Note -->
-            <RowDefinition Height="Auto" /><!-- Max Frequency -->
-            <RowDefinition Height="Auto" /><!-- Closest Pitch -->
+            <RowDefinition Height="Auto" /><!-- Frequency/Pitch -->
             <RowDefinition Height="Auto" /><!-- Buttons -->
         </Grid.RowDefinitions>
 
@@ -23,16 +22,11 @@
                    TextAlignment="Center" FontFamily="Consolas" />
 
         <TextBlock Grid.Row="1"
-                   Text="{Binding CurrentNote.MaxFrequencyText}"
+                   Text="{Binding CurrentNote.FrequencyPitchText, FallbackValue=''}"
                    FontSize="24" HorizontalAlignment="Center" Width="400"
                    TextAlignment="Center" FontFamily="Consolas" />
 
-        <TextBlock Grid.Row="2"
-                   Text="{Binding CurrentNote.ClosestPitchText}"
-                   FontSize="24" HorizontalAlignment="Center" Width="400"
-                   TextAlignment="Center" FontFamily="Consolas" />
-
-        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,20,0,0">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,20,0,0">
             <Button Content="Start Tuner" Click="StartButton_Click" Width="100" Margin="5"/>
             <Button Content="Stop Tuner" Click="StopButton_Click" Width="100" Margin="5"/>
         </StackPanel>
