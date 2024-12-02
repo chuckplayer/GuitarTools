@@ -9,26 +9,94 @@
     mc:Ignorable="d"
     Title="Guitar Tools">
 
-    <Grid x:Name="RootGrid">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /><!-- Note -->
-            <RowDefinition Height="Auto" /><!-- Frequency/Pitch -->
-            <RowDefinition Height="Auto" /><!-- Buttons -->
-        </Grid.RowDefinitions>
+    <StackPanel>
 
-        <TextBlock Grid.Row="0"
+        <Grid x:Name="TunerGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <!-- Note -->
+                <RowDefinition Height="Auto" />
+                <!-- Frequency/Pitch -->
+                <RowDefinition Height="Auto" />
+                <!-- Buttons -->
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0"
                    Text="{Binding CurrentNote.Note, FallbackValue=''}"
                    FontSize="48" HorizontalAlignment="Center" Width="400"
                    TextAlignment="Center" FontFamily="Consolas" />
 
-        <TextBlock Grid.Row="1"
+            <TextBlock Grid.Row="1"
                    Text="{Binding CurrentNote.FrequencyPitchText, FallbackValue=''}"
                    FontSize="24" HorizontalAlignment="Center" Width="400"
                    TextAlignment="Center" FontFamily="Consolas" />
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,20,0,0">
-            <Button Content="Start Tuner" Click="StartButton_Click" Width="100" Margin="5"/>
-            <Button Content="Stop Tuner" Click="StopButton_Click" Width="100" Margin="5"/>
-        </StackPanel>
-    </Grid>
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,20,0,0">
+                <Button Content="Start Tuner" Click="StartButton_Click" Width="100" Margin="5"/>
+                <Button Content="Stop Tuner" Click="StopButton_Click" Width="100" Margin="5"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid  Width="700" Height="300" Margin="10" Background="#694207" x:Name="FretboardGrid">
+            <!-- Define rows for strings -->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="15" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="15" />
+            </Grid.RowDefinitions>
+
+            <!-- Define columns for frets -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Strings -->
+            <Border Grid.Row="0" Grid.ColumnSpan="13" BorderBrush="#a99d9d" BorderThickness="0,0,0,1" />
+            <Border Grid.Row="1" Grid.ColumnSpan="13" BorderBrush="#a99d9d" BorderThickness="0,0,0,1.5" />
+            <Border Grid.Row="2" Grid.ColumnSpan="13" BorderBrush="#a99d9d" BorderThickness="0,0,0,1.75" />
+            <Border Grid.Row="3" Grid.ColumnSpan="13" BorderBrush="#a99d9d" BorderThickness="0,0,0,2" />
+            <Border Grid.Row="4" Grid.ColumnSpan="13" BorderBrush="#a99d9d" BorderThickness="0,0,0,2.25" />
+            <Border Grid.Row="5" Grid.ColumnSpan="13" BorderBrush="#a99d9d" BorderThickness="0,0,0,2.5" />
+            <Border Grid.Row="6" Grid.ColumnSpan="13" BorderBrush="#a99d9d" BorderThickness="0,0,0,1" />
+
+            <!-- Frets -->
+            <Border Grid.RowSpan="7" Grid.Column="0" BorderBrush="#ffffff" BorderThickness="0,0,4,0" />
+            <Border Grid.RowSpan="7" Grid.Column="1" BorderBrush="#a99d9d" BorderThickness="1,0,1,0" />
+            <Border Grid.RowSpan="7" Grid.Column="2" BorderBrush="#a99d9d" BorderThickness="1,0,1,0" />
+            <Border Grid.RowSpan="7" Grid.Column="3" BorderBrush="#a99d9d" BorderThickness="1,0,1,0" />
+            <Border Grid.RowSpan="7" Grid.Column="4" BorderBrush="#a99d9d" BorderThickness="1,0,1,0" />
+            <Border Grid.RowSpan="7" Grid.Column="5" BorderBrush="#a99d9d" BorderThickness="1,0,1,0" />
+            <Border Grid.RowSpan="7" Grid.Column="6" BorderBrush="#a99d9d" BorderThickness="1,0,1,0" />
+            <Border Grid.RowSpan="7" Grid.Column="7" BorderBrush="#a99d9d" BorderThickness="1,0,1,0" />
+            <Border Grid.RowSpan="7" Grid.Column="8" BorderBrush="#a99d9d" BorderThickness="1,0,1,0" />
+            <Border Grid.RowSpan="7" Grid.Column="9" BorderBrush="#a99d9d" BorderThickness="1,0,1,0" />
+            <Border Grid.RowSpan="7" Grid.Column="10" BorderBrush="#a99d9d" BorderThickness="1,0,1,0" />
+            <Border Grid.RowSpan="7" Grid.Column="11" BorderBrush="#a99d9d" BorderThickness="1,0,1,0" />
+            <Border Grid.RowSpan="7" Grid.Column="12" BorderBrush="#a99d9d" BorderThickness="1,0,1,0" />
+
+            <!-- Fret Markers -->
+            <Ellipse Grid.Row="3" Grid.Column="3" Fill="#ffffff" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Ellipse Grid.Row="3" Grid.Column="5" Fill="#ffffff" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Ellipse Grid.Row="3" Grid.Column="7" Fill="#ffffff" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Ellipse Grid.Row="2" Grid.Column="11" Fill="#ffffff" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Ellipse Grid.Row="4" Grid.Column="11" Fill="#ffffff" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Grid>
+
+    </StackPanel>
 </Window>

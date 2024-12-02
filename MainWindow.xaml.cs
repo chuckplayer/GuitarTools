@@ -18,8 +18,8 @@ namespace GuitarTools
         {
             this.InitializeComponent();
             _tuner = new Tuner();
-            RootGrid.DataContext = _tuner;
-            this.AppWindow.Resize(new SizeInt32(600,800));
+            TunerGrid.DataContext = _tuner;
+            this.AppWindow.Resize(new SizeInt32(800,600));
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
