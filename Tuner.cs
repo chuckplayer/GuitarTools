@@ -2,6 +2,7 @@
 using MathNet.Numerics.IntegralTransforms;
 using NAudio.Wave;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
@@ -95,7 +96,106 @@ public class Tuner : INotifyPropertyChanged
         _waveIn.Dispose();
         CurrentNote = null;
     }
-    
+    /// <summary>
+    /// Gets the available tunings.
+    /// </summary>
+    /// <returns></returns>
+    public static List<Tuning> GetTunings()
+    {
+        return
+        [
+            new Tuning
+            {
+                Name = "Standard tuning (E)",
+                Notes = new[] { "E", "A", "D", "G", "B", "E" },
+                Pitches = new[] { "E2", "A2", "D3", "G3", "B3", "E4" }
+            },
+
+            new Tuning
+            {
+                Name = "Half-step down (E flat)",
+                Notes = new[] { "D#", "G#", "C#", "F#", "A#", "D#" },
+                Pitches = new[] { "D#2", "G#2", "C#3", "F#3", "A#3", "D#4" }
+            },
+
+            new Tuning
+            {
+                Name = "Drop D",
+                Notes = new[] { "D", "A", "D", "G", "B", "E" },
+                Pitches = new[] { "D2", "A2", "D3", "G3", "B3", "E4" }
+            },
+
+            new Tuning
+            {
+                Name = "Drop C#",
+                Notes = new[] { "C#", "G#", "C#", "F#", "A#", "D#" },
+                Pitches = new[] { "C#2", "G#2", "C#3", "F#3", "A#3", "D#4" }
+            },
+
+            new Tuning
+            {
+                Name = "D tuning",
+                Notes = new[] { "D", "G", "C", "F", "A", "D" },
+                Pitches = new[] { "D2", "G2", "C3", "F3", "A3", "D4" }
+            },
+
+            new Tuning
+            {
+                Name = "Drop C",
+                Notes = new[] { "C", "G", "C", "F", "A", "D" },
+                Pitches = new[] { "C2", "G2", "C3", "F3", "A3", "D4" }
+            },
+
+            new Tuning
+            {
+                Name = "C# tuning",
+                Notes = new[] { "C#", "F#", "B", "E", "G#", "C#" },
+                Pitches = new[] { "C#2", "F#2", "B2", "E3", "G#3", "C#3" }
+            },
+
+            new Tuning
+            {
+                Name = "Drop B",
+                Notes = new[] { "B", "F#", "B", "E", "G#", "C#" },
+                Pitches = new[] { "B1", "F#2", "B2", "E3", "G#3", "C#4" }
+            },
+
+            new Tuning
+            {
+                Name = "C Tuning",
+                Notes = new[] { "C", "F", "A#", "D#", "G", "C" },
+                Pitches = new[] { "C2", "F2", "A#2", "D#3", "G3", "C4" }
+            },
+
+            new Tuning
+            {
+                Name = "B tuning (B standard)",
+                Notes = new[] { "B", "E", "A", "D", "F#", "B" },
+                Pitches = new[] { "B1", "E2", "A2", "D3", "F#3", "B3" }
+            },
+
+            new Tuning
+            {
+                Name = "Drop A",
+                Notes = new[] { "A", "E", "A", "D", "F#", "B" },
+                Pitches = new[] { "A1", "E2", "A2", "D3", "F#3", "B3" }
+            },
+
+            new Tuning
+            {
+                Name = "Standard tuning, 7 strings",
+                Notes = new[] { "B", "E", "A", "D", "G", "B", "E" },
+                Pitches = new[] { "B1", "E2", "A2", "D3", "G3", "B3", "E4" }
+            },
+
+            new Tuning
+            {
+                Name = "Standard tuning, 8 strings",
+                Notes = new[] { "G", "B", "E", "A", "D", "G", "B", "E" },
+                Pitches = new[] { "G1", "B1", "E2", "A2", "D3", "G3", "B3", "E4" }
+            }
+        ];
+    }
     /// <summary>
     ///  Finds the closest musical note for a given pitch.
     /// </summary>
@@ -104,7 +204,13 @@ public class Tuner : INotifyPropertyChanged
     private Tuple<string, double> FindClosestNote(double pitch)
     {
         var i = (int)Math.Round(12 * Math.Log2(pitch / ConcertPitch));
-        var closestNote = _allNotes[(i + 1200) %12] + (4 + (i + 9) / 12);
+        // Determine the MIDI note number based on A4 = 69.
+        var midiNote = i + 69;
+        // Calculate the octave from the MIDI note number.
+        var octave = (midiNote / 12) - 1;
+        // Determine note name using the note array.
+        var noteName = _allNotes[(i + 1200) % 12];
+        var closestNote = noteName + octave;
         var closestPitch = ConcertPitch * Math.Pow(2, i / 12.0);
         return Tuple.Create(closestNote, closestPitch);
     }
@@ -271,4 +377,10 @@ public class ClosestNote
     public string MaxFrequencyText => MaxFrequency > 0 ? $"{MaxFrequency}" : "";
     public string ClosestPitchText => ClosestPitch > 0 ? $"{ClosestPitch}" : "";
     public string FrequencyPitchText => MaxFrequency + ClosestPitch > 0 ? $"{MaxFrequency}/{ClosestPitch} Hz" : "";
+}
+public class Tuning
+{
+    public string Name { get; set; }
+    public string[] Notes { get; set; }
+    public string[] Pitches { get; set; }
 }
