@@ -6,12 +6,24 @@
     xmlns:local="using:GuitarTools"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:guitarTools="using:GuitarTools"
     mc:Ignorable="d"
     Title="Guitar Tools">
 
     <StackPanel>
+        <StackPanel.Resources>
+            <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        </StackPanel.Resources>
 
-        <Grid x:Name="TunerGrid">
+        <!-- ComboBox for Selecting a Tuning -->
+        <ComboBox x:Name="TuningsComboBox"
+            ItemsSource="{Binding Tunings}"
+            SelectedItem="{Binding SelectedTuning, Mode=TwoWay}"
+            DisplayMemberPath="Name"
+            PlaceholderText="Select a tuning"
+            Margin="5"/>
+
+       <Grid x:Name="TunerGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <!-- Note -->

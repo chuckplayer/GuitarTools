@@ -1,6 +1,5 @@
 using Windows.Graphics;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -13,13 +12,14 @@ namespace GuitarTools
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-        private Tuner _tuner;
+        private readonly Tuner _tuner;
         public MainWindow()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             _tuner = new Tuner();
             TunerGrid.DataContext = _tuner;
-            this.AppWindow.Resize(new SizeInt32(800,600));
+            TuningsComboBox.DataContext = _tuner;
+            AppWindow.Resize(new SizeInt32(800,600));
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)

@@ -3,6 +3,7 @@ using MathNet.Numerics.IntegralTransforms;
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
@@ -37,6 +38,7 @@ public class Tuner : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
     public bool IsTuning { get; private set; }
     private ClosestNote? _currentNote;
+    private Tuning? _selectedTuning;
     public ClosestNote? CurrentNote
     {
         get => _currentNote;
@@ -47,12 +49,25 @@ public class Tuner : INotifyPropertyChanged
             OnPropertyChanged(nameof(CurrentNote));
         }
     }
+    public Tuning? SelectedTuning
+    {
+        get => _selectedTuning;
+        set
+        {
+            if (_selectedTuning == value) return;
+            _selectedTuning = value;
+            OnPropertyChanged(nameof(SelectedTuning));
+        }
+    }
+    public ObservableCollection<Tuning> Tunings { get; }
+
 
     public Tuner()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         _noteBuffer[0] = "1";
         _noteBuffer[1] = "2";
+        Tunings = new ObservableCollection<Tuning>(GetTunings());
     }
 
     protected virtual void OnPropertyChanged(string propertyName)
@@ -195,6 +210,23 @@ public class Tuner : INotifyPropertyChanged
                 Pitches = new[] { "G1", "B1", "E2", "A2", "D3", "G3", "B3", "E4" }
             }
         ];
+    }
+    /// <summary>
+    /// Determines if the current note is in the selected tuning.
+    /// </summary>
+    public bool IsNoteInSelectedTuning
+    {
+        get
+        {
+            return SelectedTuning != null &&
+                   !string.IsNullOrEmpty(CurrentNote?.Note) &&
+                   // Check if CurrentNote.Note (e.g. "E") matches any pitch in the selected tuning’s Pitches
+                   // Or if you intended to match Pitches like "E4" specifically, use that.
+                   // For this example, let's say we match the pitch text minus frequency:
+                   // If CurrentNote.Note is "E", we might want to check if any of the Tuning's Pitches start with "E".
+                   // If we actually know CurrentNote.Note is exactly something like "E4", then just match directly:
+                   SelectedTuning.Pitches.Any(p => p.StartsWith(CurrentNote.Note));
+        }
     }
     /// <summary>
     ///  Finds the closest musical note for a given pitch.
