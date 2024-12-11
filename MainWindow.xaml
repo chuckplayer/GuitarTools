@@ -93,18 +93,18 @@
 
                 <!-- Frets -->
                 <Border Grid.RowSpan="7" Grid.Column="0" BorderBrush="#ffffff" BorderThickness="0,0,8,0" />
-                <Border Grid.RowSpan="7" Grid.Column="1" BorderBrush="#808080" BorderThickness="1,0,2,0" />
-                <Border Grid.RowSpan="7" Grid.Column="2" BorderBrush="#808080" BorderThickness="1,0,2,0" />
-                <Border Grid.RowSpan="7" Grid.Column="3" BorderBrush="#808080" BorderThickness="1,0,2,0" />
-                <Border Grid.RowSpan="7" Grid.Column="4" BorderBrush="#808080" BorderThickness="1,0,2,0" />
-                <Border Grid.RowSpan="7" Grid.Column="5" BorderBrush="#808080" BorderThickness="1,0,2,0" />
-                <Border Grid.RowSpan="7" Grid.Column="6" BorderBrush="#808080" BorderThickness="1,0,2,0" />
-                <Border Grid.RowSpan="7" Grid.Column="7" BorderBrush="#808080" BorderThickness="1,0,2,0" />
-                <Border Grid.RowSpan="7" Grid.Column="8" BorderBrush="#808080" BorderThickness="1,0,2,0" />
-                <Border Grid.RowSpan="7" Grid.Column="9" BorderBrush="#808080" BorderThickness="1,0,2,0" />
-                <Border Grid.RowSpan="7" Grid.Column="10" BorderBrush="#808080" BorderThickness="1,0,2,0" />
-                <Border Grid.RowSpan="7" Grid.Column="11" BorderBrush="#808080" BorderThickness="1,0,2,0" />
-                <Border Grid.RowSpan="7" Grid.Column="12" BorderBrush="#808080" BorderThickness="1,0,2,0" />
+                <Border Grid.RowSpan="7" Grid.Column="1" BorderBrush="#808080" BorderThickness="1,0,4,0" />
+                <Border Grid.RowSpan="7" Grid.Column="2" BorderBrush="#808080" BorderThickness="1,0,4,0" />
+                <Border Grid.RowSpan="7" Grid.Column="3" BorderBrush="#808080" BorderThickness="1,0,4,0" />
+                <Border Grid.RowSpan="7" Grid.Column="4" BorderBrush="#808080" BorderThickness="1,0,4,0" />
+                <Border Grid.RowSpan="7" Grid.Column="5" BorderBrush="#808080" BorderThickness="1,0,4,0" />
+                <Border Grid.RowSpan="7" Grid.Column="6" BorderBrush="#808080" BorderThickness="1,0,4,0" />
+                <Border Grid.RowSpan="7" Grid.Column="7" BorderBrush="#808080" BorderThickness="1,0,4,0" />
+                <Border Grid.RowSpan="7" Grid.Column="8" BorderBrush="#808080" BorderThickness="1,0,4,0" />
+                <Border Grid.RowSpan="7" Grid.Column="9" BorderBrush="#808080" BorderThickness="1,0,4,0" />
+                <Border Grid.RowSpan="7" Grid.Column="10" BorderBrush="#808080" BorderThickness="1,0,4,0" />
+                <Border Grid.RowSpan="7" Grid.Column="11" BorderBrush="#808080" BorderThickness="1,0,4,0" />
+                <Border Grid.RowSpan="7" Grid.Column="12" BorderBrush="#808080" BorderThickness="1,0,4,0" />
 
                 <!-- Fret Markers -->
                 <Ellipse Grid.Row="3" Grid.Column="3" Fill="#808080" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />

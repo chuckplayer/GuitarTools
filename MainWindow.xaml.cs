@@ -36,15 +36,15 @@ namespace GuitarTools
                     var ellipse = new Ellipse
                     {
                         Fill = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Black),
-                        Width = 40,
-                        Height = 40,
+                        Width = 45,
+                        Height = 45,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Bottom,
-                        Margin = new Thickness(0, 0, 0, -20),
+                        Margin = new Thickness(0, 0, 0, -22),
                         Tag = (row, col)
                     };
                     if (col > 0)
-                        ellipse.Opacity = 0.8;
+                        ellipse.Opacity = 0.75;
 
                     Microsoft.UI.Xaml.Controls.Grid.SetRow(ellipse, row);
                     Microsoft.UI.Xaml.Controls.Grid.SetColumn(ellipse, col);
@@ -53,17 +53,14 @@ namespace GuitarTools
                 }
             }
         }
-
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
             _tuner.Start();
         }
-
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
             _tuner.Stop();
         }
-
         private void Tuning_SelectionChanged(object sender, Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs e)
         {
             var comboBox = (Microsoft.UI.Xaml.Controls.ComboBox)sender;
@@ -90,7 +87,7 @@ namespace GuitarTools
                 if (foundEllipse == null) continue;
                 var indexOffset = row + 1;
                 var note = ((Tuning)selectedItem).Notes[^indexOffset];
-                UpdateTextAtCell(row, col, note);
+                UpdateFretboardNotes(row, note, totalCols);
             }
         }
         private void UpdateTextAtCell(int row, int col, string newText)
@@ -116,5 +113,21 @@ namespace GuitarTools
             Microsoft.UI.Xaml.Controls.Grid.SetColumn(textBlock, col);
             FretboardGrid.Children.Add(textBlock);
         }
+        private void UpdateFretboardNotes(int row, string startNote, int totalCols)
+        {
+            var startIndex = Array.IndexOf(_tuner.AllNotes, startNote);
+            if (startIndex == -1)
+            {
+                startIndex = 0;
+            }
+
+            for (var col = 0; col < totalCols; col++)
+            {
+                var noteIndex = (startIndex + col) % _tuner.AllNotes.Length;
+                var noteForCell = _tuner.AllNotes[noteIndex];
+                UpdateTextAtCell(row, col, noteForCell);
+            }
+        }
     }
+
 }

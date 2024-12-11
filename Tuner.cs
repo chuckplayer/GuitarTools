@@ -35,6 +35,7 @@ public class Tuner : INotifyPropertyChanged
     private readonly DispatcherQueue _dispatcherQueue;
 
     public readonly string[] AllNotes = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
+    
     public event PropertyChangedEventHandler? PropertyChanged;
     public bool IsTuning { get; private set; }
     private ClosestNote? _currentNote;
@@ -60,7 +61,6 @@ public class Tuner : INotifyPropertyChanged
         }
     }
     public ObservableCollection<Tuning> Tunings { get; }
-
 
     public Tuner()
     {
@@ -127,47 +127,26 @@ public class Tuner : INotifyPropertyChanged
                 Notes = new[] { "E", "A", "D", "G", "B", "E" },
                 Pitches = new[] { "E2", "A2", "D3", "G3", "B3", "E4" }
             },
+            
+            new Tuning
+            {
+                Name = "B standard",
+                Notes = new[] { "B", "E", "A", "D", "F#", "B" },
+                Pitches = new[] { "B1", "E2", "A2", "D3", "F#3", "B3" }
+            },
 
             new Tuning
             {
-                Name = "Half-step down (E flat)",
+                Name = "D# Standard",
                 Notes = new[] { "D#", "G#", "C#", "F#", "A#", "D#" },
                 Pitches = new[] { "D#2", "G#2", "C#3", "F#3", "A#3", "D#4" }
             },
 
             new Tuning
             {
-                Name = "Drop D",
-                Notes = new[] { "D", "A", "D", "G", "B", "E" },
-                Pitches = new[] { "D2", "A2", "D3", "G3", "B3", "E4" }
-            },
-
-            new Tuning
-            {
-                Name = "Drop C#",
-                Notes = new[] { "C#", "G#", "C#", "F#", "A#", "D#" },
-                Pitches = new[] { "C#2", "G#2", "C#3", "F#3", "A#3", "D#4" }
-            },
-
-            new Tuning
-            {
-                Name = "D tuning",
-                Notes = new[] { "D", "G", "C", "F", "A", "D" },
-                Pitches = new[] { "D2", "G2", "C3", "F3", "A3", "D4" }
-            },
-
-            new Tuning
-            {
-                Name = "Drop C",
-                Notes = new[] { "C", "G", "C", "F", "A", "D" },
-                Pitches = new[] { "C2", "G2", "C3", "F3", "A3", "D4" }
-            },
-
-            new Tuning
-            {
-                Name = "C# tuning",
-                Notes = new[] { "C#", "F#", "B", "E", "G#", "C#" },
-                Pitches = new[] { "C#2", "F#2", "B2", "E3", "G#3", "C#3" }
+                Name = "Drop A",
+                Notes = new[] { "A", "E", "A", "D", "F#", "B" },
+                Pitches = new[] { "A1", "E2", "A2", "D3", "F#3", "B3" }
             },
 
             new Tuning
@@ -179,6 +158,34 @@ public class Tuner : INotifyPropertyChanged
 
             new Tuning
             {
+                Name = "Drop C",
+                Notes = new[] { "C", "G", "C", "F", "A", "D" },
+                Pitches = new[] { "C2", "G2", "C3", "F3", "A3", "D4" }
+            },
+
+            new Tuning
+            {
+                Name = "Drop C#",
+                Notes = new[] { "C#", "G#", "C#", "F#", "A#", "D#" },
+                Pitches = new[] { "C#2", "G#2", "C#3", "F#3", "A#3", "D#4" }
+            },
+
+            new Tuning
+            {
+                Name = "Drop D",
+                Notes = new[] { "D", "A", "D", "G", "B", "E" },
+                Pitches = new[] { "D2", "A2", "D3", "G3", "B3", "E4" }
+            },
+
+            new Tuning
+            {
+                Name = "D Tuning",
+                Notes = new[] { "D", "G", "C", "F", "A", "D" },
+                Pitches = new[] { "D2", "G2", "C3", "F3", "A3", "D4" }
+            },
+
+            new Tuning
+            {
                 Name = "C Tuning",
                 Notes = new[] { "C", "F", "A#", "D#", "G", "C" },
                 Pitches = new[] { "C2", "F2", "A#2", "D#3", "G3", "C4" }
@@ -186,17 +193,39 @@ public class Tuner : INotifyPropertyChanged
 
             new Tuning
             {
-                Name = "B tuning (B standard)",
-                Notes = new[] { "B", "E", "A", "D", "F#", "B" },
-                Pitches = new[] { "B1", "E2", "A2", "D3", "F#3", "B3" }
+                Name = "C# Tuning",
+                Notes = new[] { "C#", "F#", "B", "E", "G#", "C#" },
+                Pitches = new[] { "C#2", "F#2", "B2", "E3", "G#3", "C#3" }
             },
 
             new Tuning
             {
-                Name = "Drop A",
-                Notes = new[] { "A", "E", "A", "D", "F#", "B" },
-                Pitches = new[] { "A1", "E2", "A2", "D3", "F#3", "B3" }
+                Name = "Open C",
+                Notes = new[] { "C", "G", "C", "G", "C", "E" },
+                Pitches = new[] { "C2", "G2", "C3", "G3", "C4", "E4" }
+            },
+
+            new Tuning
+            {
+                Name = "Open D",
+                Notes = new[] { "D", "A", "D", "F#", "A", "D" },
+                Pitches = new[] { "D2", "A2", "D3", "F#3", "A3", "D4" }
+            },
+
+            new Tuning
+            {
+                Name = "Open E",
+                Notes = new[] { "E", "B", "E", "G#", "B", "E" },
+                Pitches = new[] { "E2", "B2", "E3", "G#3", "B3", "E4" }
+            },
+
+            new Tuning
+            {
+                Name = "Open G",
+                Notes = new[] { "D", "G", "D", "G", "B", "D" },
+                Pitches = new[] { "D2", "G2", "D3", "G3", "B3", "D4" }
             }
+
         ];
     }
     /// <summary>
