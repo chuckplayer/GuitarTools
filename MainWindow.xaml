@@ -39,7 +39,7 @@
                 <TextBlock Grid.Row="0"
                    Text="{Binding CurrentNote.Note, FallbackValue=''}"
                    FontSize="48" HorizontalAlignment="Center" Width="400"
-                   TextAlignment="Center" FontFamily="Consolas" Foreground="#000000"  />
+                   TextAlignment="Center" FontFamily="Consolas" Foreground="#000000" />
 
                 <TextBlock Grid.Row="1"
                    Text="{Binding CurrentNote.FrequencyPitchText, FallbackValue=''}"
