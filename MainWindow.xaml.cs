@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Windows.Graphics;
-using ABI.Windows.UI;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -44,7 +43,7 @@ namespace GuitarTools
                 {
                     var ellipse = new Ellipse
                     {
-                        Fill = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Black),
+                        Fill = new SolidColorBrush(Colors.Black),
                         Width = 45,
                         Height = 45,
                         HorizontalAlignment = HorizontalAlignment.Center,
@@ -145,7 +144,7 @@ namespace GuitarTools
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Bottom,
                 Margin = new Thickness(0, 0, 0, -10),
-                Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.White)
+                Foreground = new SolidColorBrush(Colors.White)
             };
 
             Grid.SetRow(textBlock, row);
@@ -189,7 +188,7 @@ namespace GuitarTools
         {
             foreach (var child in FretboardGrid.Children)
             {
-                if (child is Ellipse { Tag: (int row, int col) } ellipse)
+                if (child is Ellipse { Tag: (int, int) } ellipse)
                 {
                     ellipse.Fill = new SolidColorBrush(Colors.Black);
                 }
