@@ -28,13 +28,13 @@ public class Tuner : INotifyPropertyChanged
     private const double WhiteNoiseThresh = 0.2; // Threshold for noise suppression
     private const double DeltaFreq = SampleFreq / (double)WindowSize; // Frequency step width
     private readonly int[] _octaveBands = [50, 100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600];
-    private readonly string[] _allNotes = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
     private float[] _windowSamples = new float[WindowSize];
     private string[] _noteBuffer = new string[2];
     private readonly double[] _hannWindow = Window.Hann(WindowSize);
     private WaveInEvent _waveIn;
     private readonly DispatcherQueue _dispatcherQueue;
 
+    public readonly string[] AllNotes = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
     public event PropertyChangedEventHandler? PropertyChanged;
     public bool IsTuning { get; private set; }
     private ClosestNote? _currentNote;
@@ -68,6 +68,8 @@ public class Tuner : INotifyPropertyChanged
         _noteBuffer[0] = "1";
         _noteBuffer[1] = "2";
         Tunings = new ObservableCollection<Tuning>(GetTunings());
+        if(Tunings.Count > 0)
+            SelectedTuning = Tunings[0];
     }
 
     protected virtual void OnPropertyChanged(string propertyName)
@@ -194,20 +196,6 @@ public class Tuner : INotifyPropertyChanged
                 Name = "Drop A",
                 Notes = new[] { "A", "E", "A", "D", "F#", "B" },
                 Pitches = new[] { "A1", "E2", "A2", "D3", "F#3", "B3" }
-            },
-
-            new Tuning
-            {
-                Name = "Standard tuning, 7 strings",
-                Notes = new[] { "B", "E", "A", "D", "G", "B", "E" },
-                Pitches = new[] { "B1", "E2", "A2", "D3", "G3", "B3", "E4" }
-            },
-
-            new Tuning
-            {
-                Name = "Standard tuning, 8 strings",
-                Notes = new[] { "G", "B", "E", "A", "D", "G", "B", "E" },
-                Pitches = new[] { "G1", "B1", "E2", "A2", "D3", "G3", "B3", "E4" }
             }
         ];
     }
@@ -241,7 +229,7 @@ public class Tuner : INotifyPropertyChanged
         // Calculate the octave from the MIDI note number.
         var octave = (midiNote / 12) - 1;
         // Determine note name using the note array.
-        var noteName = _allNotes[(i + 1200) % 12];
+        var noteName = AllNotes[(i + 1200) % 12];
         var closestNote = noteName + octave;
         var closestPitch = ConcertPitch * Math.Pow(2, i / 12.0);
         return Tuple.Create(closestNote, closestPitch);
