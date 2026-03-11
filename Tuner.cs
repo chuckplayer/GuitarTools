@@ -426,6 +426,10 @@ public class ClosestNote
     public string MaxFrequencyText => MaxFrequency > 0 ? $"{MaxFrequency}" : "";
     public string ClosestPitchText => ClosestPitch > 0 ? $"{ClosestPitch}" : "";
     public string FrequencyPitchText => MaxFrequency + ClosestPitch > 0 ? $"{MaxFrequency}/{ClosestPitch} Hz" : "";
+    public double CentDeviation => MaxFrequency > 0 && ClosestPitch > 0
+        ? 1200 * Math.Log2(MaxFrequency / ClosestPitch)
+        : 0;
+    public bool IsInTune => Math.Abs(CentDeviation) <= 2.0;
 }
 public class Tuning
 {
